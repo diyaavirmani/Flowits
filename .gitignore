@@ -19,8 +19,9 @@ frontend/node_modules/
 frontend/dist/
 frontend/.eslintcache
 
-# Local dev logs
+# Local dev logs & artifacts
 *.log
+frontend-render.png
 
 # OS files
 .DS_Store
