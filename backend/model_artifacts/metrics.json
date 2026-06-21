@@ -1,0 +1,106 @@
+{
+  "cross_validation": {
+    "cv_f1_mean": 0.8588,
+    "cv_f1_std": 0.0107,
+    "cv_auc_mean": 0.974,
+    "cv_auc_std": 0.0031,
+    "n_folds": 5
+  },
+  "classifier": {
+    "accuracy": 0.8244,
+    "precision_weighted": 0.906,
+    "recall_weighted": 0.8244,
+    "f1_weighted": 0.8563,
+    "roc_auc_ovr": 0.975,
+    "per_class_f1": {
+      "0": 0.8631,
+      "1": 0.9196,
+      "2": 0.3653,
+      "3": 0.2727
+    },
+    "training_rows": 6445,
+    "test_rows": 1612
+  },
+  "regressor": {
+    "mae_minutes": 52.03,
+    "rmse_minutes": 79.78,
+    "test_rows": 1427,
+    "training_rows": 5699
+  },
+  "feature_importances": [
+    {
+      "feature": "priority_encoded",
+      "importance": 0.484764
+    },
+    {
+      "feature": "cause_closure_rate",
+      "importance": 0.159987
+    },
+    {
+      "feature": "junction_closure_rate",
+      "importance": 0.122994
+    },
+    {
+      "feature": "hour_of_day",
+      "importance": 0.056379
+    },
+    {
+      "feature": "corridor_closure_rate",
+      "importance": 0.05569
+    },
+    {
+      "feature": "spatial_cluster_closure_rate",
+      "importance": 0.052046
+    },
+    {
+      "feature": "day_of_week",
+      "importance": 0.030598
+    },
+    {
+      "feature": "zone_closure_rate",
+      "importance": 0.01445
+    },
+    {
+      "feature": "zone_incident_count",
+      "importance": 0.013341
+    },
+    {
+      "feature": "is_peak_hour",
+      "importance": 0.00734
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.002411
+    }
+  ],
+  "feature_columns": [
+    "cause_closure_rate",
+    "corridor_closure_rate",
+    "day_of_week",
+    "hour_of_day",
+    "is_peak_hour",
+    "is_weekend",
+    "junction_closure_rate",
+    "priority_encoded",
+    "spatial_cluster_closure_rate",
+    "zone_closure_rate",
+    "zone_incident_count"
+  ],
+  "class_thresholds": {
+    "class_2": 0.44999999999999996,
+    "class_3": 0.44999999999999996
+  },
+  "class_labels": {
+    "0": "Monitor only",
+    "1": "Single officer",
+    "2": "Standard response",
+    "3": "Maximum response"
+  },
+  "n_classes": 4,
+  "class_distribution": {
+    "0": 2752,
+    "1": 4709,
+    "2": 331,
+    "3": 265
+  }
+}

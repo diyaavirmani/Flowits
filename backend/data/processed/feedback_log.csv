@@ -1,0 +1,2 @@
+incident_id,incident_date,predicted,actual,correct,error
+FKIDTEST001,2026-06-20,0.45,1,False,0.55

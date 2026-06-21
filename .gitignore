@@ -1,0 +1,27 @@
+# Data
+backend/data/raw/events.csv
+backend/data/processed/features_train.csv
+backend/data/processed/features_test.csv
+
+# Model artifacts
+backend/model_artifacts/*.pkl
+
+# Python cache & envs
+__pycache__/
+*.pyc
+.venv/
+.venv*/
+venv/
+env/
+
+# Node/Vite dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+
+# Local dev logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
