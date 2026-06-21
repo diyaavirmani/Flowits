@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from src.allocation import allocate_resources, compute_before_after
 from src.data_loader import load_events
@@ -121,7 +122,7 @@ app.add_middleware(
 )
 
 
-@app.get("/", tags=["Root"])
+@app.get("/api", tags=["Root"])
 def root() -> Dict[str, Any]:
     return {
         "service": "FLOWITS // Traffic Incident Severity & Mitigation System",
@@ -377,3 +378,12 @@ def sample_incidents() -> List[SampleIncident]:
 @app.get("/corridors")
 def corridors() -> List[str]:
     return SUPPORTED_CORRIDORS
+
+
+# ── Serve the built frontend (single-link deploy) ──
+# When backend/static exists (the production frontend build copied in), serve it
+# at the root so one Railway URL delivers both the UI and the API. API routes are
+# registered above, so they take precedence over this catch-all mount.
+STATIC_DIR = BASE_DIR / "static"
+if STATIC_DIR.exists():
+    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="frontend")

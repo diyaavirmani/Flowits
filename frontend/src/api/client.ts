@@ -59,9 +59,15 @@ interface BackendHealthResponse {
   }
 }
 
-// API base: set VITE_API_URL at build time (e.g. the Railway backend URL).
-// Falls back to the local dev server when the env var is absent.
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8001'
+// API base resolution:
+//  - VITE_API_URL (if set at build time) always wins — use this to point a
+//    separately-hosted frontend at a remote backend.
+//  - Otherwise in a production build the frontend is served BY the backend,
+//    so calls are same-origin (relative '').
+//  - In local dev, fall back to the local backend on :8001.
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.PROD ? '' : 'http://127.0.0.1:8001')
 
 const api = axios.create({
   baseURL: API_BASE_URL,
