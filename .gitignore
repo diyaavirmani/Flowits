@@ -23,6 +23,9 @@ frontend/.eslintcache
 *.log
 frontend-render.png
 
+# Local Claude Code dev tooling (not part of the app)
+.claude/
+
 # OS files
 .DS_Store
 Thumbs.db
