@@ -1,10 +1,10 @@
 # Data
-backend/data/raw/events.csv
+# events.csv is committed so the deployed app can serve real sample incidents
 backend/data/processed/features_train.csv
 backend/data/processed/features_test.csv
 
-# Model artifacts
-backend/model_artifacts/*.pkl
+# Model artifacts are committed so the app runs without retraining (needed on Railway)
+# backend/model_artifacts/*.pkl
 
 # Python cache & envs
 __pycache__/
