@@ -59,8 +59,12 @@ interface BackendHealthResponse {
   }
 }
 
+// API base: set VITE_API_URL at build time (e.g. the Railway backend URL).
+// Falls back to the local dev server when the env var is absent.
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8001'
+
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8001',
+  baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 
