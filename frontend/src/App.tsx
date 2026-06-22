@@ -1,7 +1,7 @@
-import Dashboard from './pages/Dashboard'
+import AppShell from './components/AppShell'
 
 function App() {
-  return <Dashboard />
+  return <AppShell />
 }
 
 export default App

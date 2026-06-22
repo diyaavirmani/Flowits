@@ -1,51 +1,46 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{ts,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        // ── Single palette ──
+        accent: '#ea580c',
+        'accent-soft': '#fff1e9',
+        'accent-dark': '#c2410c',
+        ink: '#1a1a1a',
+        muted: '#6b7280',
+        surface: '#f6f5f1',
+        card: '#ffffff',
+        line: '#e6e4de',
+        ok: '#16a34a',
+        warn: '#f59e0b',
+        danger: '#dc2626',
+        'ok-soft': '#e9f6ee',
+        'warn-soft': '#fef3da',
+        'danger-soft': '#fbe9e9',
+        // ── compatibility tokens (mapped into the one palette) ──
+        'ink-secondary': '#6b7280',
+        'grey-light': '#f6f5f1',
+        mid: '#d8d6cf',
+        blue: '#1d70b8',
+        'blue-dark': '#c2410c',
+        green: '#16a34a',
+        red: '#dc2626',
+        'tag-blue-bg': '#fff1e9',
+        'tag-blue-text': '#c2410c',
+        'tag-green-bg': '#e9f6ee',
+        'tag-green-text': '#15803d',
+        'tag-orange-bg': '#fff1e9',
+        'tag-orange-text': '#c2410c',
+        'tag-red-bg': '#fbe9e9',
+        'tag-red-text': '#b91c1c',
+        'tag-grey-bg': '#eceae3',
+        'tag-grey-text': '#4b5563',
       },
       fontFamily: {
-        sans: ['JetBrains Mono', 'monospace'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         pixel: ['"Geist Pixel Grid"', '"Pixelify Sans"', 'monospace'],
-      },
-      borderRadius: {
-        lg: '0rem',
-        md: '0rem',
-        sm: '0rem',
       },
     },
   },

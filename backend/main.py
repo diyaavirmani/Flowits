@@ -25,15 +25,20 @@ from src.graph_builder import (
     build_graph,
     compute_diversion,
     get_node_impact_scores,
+    list_locations,
 )
+from src.playbook import assess_impact
+from src.events_feed import get_upcoming_events
 from src.schemas import (
     AllocationRequest,
     AllocationResponse,
     FeedbackEntry,
     FeedbackHistoryResponse,
     IncidentInput,
+    LocationOption,
     PredictionResponse,
     SampleIncident,
+    UpcomingEventsResponse,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -197,6 +202,7 @@ def predict_incident(payload: IncidentInput) -> PredictionResponse:
         incident_row = pd.Series(
             {
                 "event_cause": payload.event_cause,
+                "event_type": "planned" if payload.planned else "unplanned",
                 "latitude": payload.latitude,
                 "longitude": payload.longitude,
                 "start_datetime": start_datetime,
@@ -236,6 +242,16 @@ def predict_incident(payload: IncidentInput) -> PredictionResponse:
             3: "Maximum response",
         }
 
+        impact = assess_impact(
+            event_cause=payload.event_cause,
+            planned_flag=payload.planned,
+            ml_severity_class=predicted_class,
+            duration_minutes=duration_minutes,
+            is_peak_hour=bool(features.get("is_peak_hour", 0)),
+            hour_of_day=payload.hour_of_day,
+            corridor_rate=float(features["corridor_closure_rate"]),
+        )
+
         return PredictionResponse(
             severity_class=predicted_class,
             severity_label=severity_labels.get(predicted_class, "Unknown"),
@@ -249,6 +265,7 @@ def predict_incident(payload: IncidentInput) -> PredictionResponse:
             cv_f1_mean=float(app.state.metrics.get("cross_validation", {}).get("cv_f1_mean", 0.0)),
             cv_f1_std=float(app.state.metrics.get("cross_validation", {}).get("cv_f1_std", 0.0)),
             feature_importances=app.state.metrics.get("feature_importances", []),
+            impact=impact,
         )
     except Exception as exc:
         # Log the detail server-side; return a generic message to the client.
@@ -378,6 +395,39 @@ def sample_incidents() -> List[SampleIncident]:
 @app.get("/corridors")
 def corridors() -> List[str]:
     return SUPPORTED_CORRIDORS
+
+
+@app.get("/locations", response_model=List[LocationOption])
+def locations() -> List[Dict[str, Any]]:
+    """Named junctions across supported corridors — so officers pick a place,
+    not coordinates."""
+    return list_locations()
+
+
+@app.get("/events/upcoming", response_model=UpcomingEventsResponse)
+def upcoming_events() -> Dict[str, Any]:
+    """Ingest upcoming/recent events from a live news feed (with a curated
+    fallback) and tag each with a supported-corridor location where recognised."""
+    return get_upcoming_events()
+
+
+@app.get("/corridor-profile")
+def corridor_profile(corridor: str) -> Dict[str, Any]:
+    """Historical analytics for a corridor — used by the briefing report's
+    peak-risk-by-hour chart. Computed from the real incident history."""
+    df = getattr(app.state, "events_df", None)
+    if df is None:
+        raise HTTPException(status_code=500, detail="Incident history not loaded.")
+    sub = df[df["corridor"] == corridor]
+    hourly = sub["start_datetime"].dt.hour.value_counts().reindex(range(24), fill_value=0)
+    return {
+        "corridor": corridor,
+        "total_incidents": int(len(sub)),
+        "planned": int((sub["event_type"] == "planned").sum()),
+        "unplanned": int((sub["event_type"] == "unplanned").sum()),
+        "closure_rate": float(sub["requires_road_closure"].mean()) if len(sub) else 0.0,
+        "hourly": [{"hour": int(h), "count": int(hourly[h])} for h in range(24)],
+    }
 
 
 # ── Serve the built frontend (single-link deploy) ──

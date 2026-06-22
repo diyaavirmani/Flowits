@@ -402,6 +402,18 @@ def compute_diversion(graph: nx.DiGraph, incident_lat: float, incident_lng: floa
     """
     blocked, _dist = _nearest_node(graph, incident_lat, incident_lng)
     blocked_label = graph.nodes[blocked].get("label", blocked)
+    blocked_lat = graph.nodes[blocked].get("lat")
+    blocked_lng = graph.nodes[blocked].get("lng")
+
+    def _points(node_ids):
+        return [
+            {
+                "name": graph.nodes[n].get("label", n),
+                "latitude": graph.nodes[n].get("lat", 0.0),
+                "longitude": graph.nodes[n].get("lng", 0.0),
+            }
+            for n in node_ids
+        ]
 
     neighbors = (set(graph.predecessors(blocked)) | set(graph.successors(blocked))) - {blocked}
     if len(neighbors) < 2:
@@ -411,6 +423,9 @@ def compute_diversion(graph: nx.DiGraph, incident_lat: float, incident_lng: floa
             "intercept_at": None,
             "rejoin_at": None,
             "route": [],
+            "route_points": [],
+            "blocked_latitude": blocked_lat,
+            "blocked_longitude": blocked_lng,
             "direct_minutes": 0.0,
             "detour_minutes": 0.0,
             "added_minutes": 0.0,
@@ -445,6 +460,9 @@ def compute_diversion(graph: nx.DiGraph, incident_lat: float, incident_lng: floa
             "intercept_at": graph.nodes[upstream].get("label", upstream),
             "rejoin_at": graph.nodes[downstream].get("label", downstream),
             "route": [],
+            "route_points": [],
+            "blocked_latitude": blocked_lat,
+            "blocked_longitude": blocked_lng,
             "direct_minutes": round(direct_minutes, 1),
             "detour_minutes": 0.0,
             "added_minutes": 0.0,
@@ -463,6 +481,9 @@ def compute_diversion(graph: nx.DiGraph, incident_lat: float, incident_lng: floa
         "intercept_at": graph.nodes[upstream].get("label", upstream),
         "rejoin_at": graph.nodes[downstream].get("label", downstream),
         "route": route_labels,
+        "route_points": _points(path),
+        "blocked_latitude": blocked_lat,
+        "blocked_longitude": blocked_lng,
         "direct_minutes": round(direct_minutes, 1),
         "detour_minutes": round(detour_minutes, 1),
         "added_minutes": round(added_minutes, 1),
@@ -472,6 +493,32 @@ def compute_diversion(graph: nx.DiGraph, incident_lat: float, incident_lng: floa
             "Bypass travel time is a planning estimate."
         ),
     }
+
+
+def list_locations() -> list:
+    """
+    Return every known junction across the supported corridors, with its
+    coordinates and corridor. The frontend uses this so an officer can pick a
+    place by name instead of typing latitude/longitude.
+    """
+    locations = []
+    seen = set()
+    for corridor in SUPPORTED_CORRIDORS:
+        graph = build_graph(corridor)
+        for _node_id, data in graph.nodes(data=True):
+            key = (data["label"], corridor)
+            if key in seen:
+                continue
+            seen.add(key)
+            locations.append(
+                {
+                    "name": data.get("label", _node_id),
+                    "corridor": corridor,
+                    "latitude": float(data["lat"]),
+                    "longitude": float(data["lng"]),
+                }
+            )
+    return locations
 
 
 def get_node_impact_scores(

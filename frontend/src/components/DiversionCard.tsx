@@ -6,91 +6,62 @@ interface DiversionCardProps {
 
 export default function DiversionCard({ diversion }: DiversionCardProps) {
   return (
-    <div className="border-2 border-foreground bg-background">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b-2 border-foreground px-4 py-2">
-        <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
-          diversion.route
-        </span>
-        <span className="h-2 w-2 bg-[#ea580c]" />
-      </div>
+    <section className="border-t-4 border-ink pt-5">
+      <h2 className="text-xl font-bold mb-4">Traffic diversion</h2>
 
-      {/* Blocked junction */}
-      <div className="flex items-center justify-between border-b-2 border-foreground px-5 py-3">
-        <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-          Blocked Junction
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="h-2 w-2 bg-destructive" />
-          <span className="text-sm font-bold uppercase tracking-tight">
-            {diversion.blocked_junction}
-          </span>
-        </span>
-      </div>
+      <dl className="border-t border-mid mb-4">
+        <div className="flex justify-between gap-4 py-3 border-b border-mid">
+          <dt className="text-ink-secondary">Blocked junction</dt>
+          <dd className="font-bold text-right">
+            <span className="bg-tag-red-bg text-tag-red-text font-bold text-xs uppercase tracking-wide px-2 py-1">
+              {diversion.blocked_junction}
+            </span>
+          </dd>
+        </div>
+      </dl>
 
       {diversion.has_diversion ? (
         <>
-          {/* Reroute chain */}
-          <div className="px-5 py-4 border-b-2 border-foreground">
-            <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-3">
-              Recommended Reroute
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              {diversion.route.map((stop, index) => (
-                <span key={`${stop}-${index}`} className="flex items-center gap-2">
-                  <span
-                    className={`text-[11px] font-bold uppercase tracking-wider px-2 py-1 border-2 border-foreground ${
-                      index === 0 || index === diversion.route.length - 1
-                        ? 'bg-[#ea580c] text-background'
-                        : 'bg-background text-foreground'
-                    }`}
-                  >
-                    {stop}
-                  </span>
-                  {index < diversion.route.length - 1 && (
-                    <span className="text-foreground font-bold">→</span>
-                  )}
+          <p className="font-bold mb-2">Recommended reroute</p>
+          <div className="flex flex-wrap items-center gap-2 mb-5">
+            {diversion.route.map((stop, index) => (
+              <span key={`${stop}-${index}`} className="flex items-center gap-2">
+                <span
+                  className={`text-sm font-bold px-2 py-1 border-2 ${
+                    index === 0 || index === diversion.route.length - 1
+                      ? 'bg-blue text-white border-blue'
+                      : 'bg-white text-ink border-ink'
+                  }`}
+                >
+                  {stop}
                 </span>
-              ))}
-            </div>
+                {index < diversion.route.length - 1 && <span aria-hidden="true">→</span>}
+              </span>
+            ))}
           </div>
 
-          {/* Travel-time comparison */}
-          <div className="grid grid-cols-3 border-b-2 border-foreground">
-            <div className="border-r-2 border-foreground px-4 py-4 text-center">
-              <p className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
-                Direct
-              </p>
-              <p className="font-mono text-xl font-bold tabular-nums">
-                {diversion.direct_minutes}
-                <span className="text-xs font-normal text-muted-foreground"> min</span>
-              </p>
+          <dl className="border-t border-mid">
+            <div className="flex justify-between gap-4 py-3 border-b border-mid">
+              <dt className="text-ink-secondary">Direct route time</dt>
+              <dd className="font-bold tabular-nums">{diversion.direct_minutes} min</dd>
             </div>
-            <div className="border-r-2 border-foreground px-4 py-4 flex flex-col items-center justify-center">
-              <span className="bg-[#ea580c] text-background text-[10px] font-bold tracking-[0.15em] uppercase px-2 py-1">
-                +{diversion.added_minutes} min
-              </span>
+            <div className="flex justify-between gap-4 py-3 border-b border-mid">
+              <dt className="text-ink-secondary">Via diversion</dt>
+              <dd className="font-bold tabular-nums">{diversion.detour_minutes} min</dd>
             </div>
-            <div className="px-4 py-4 text-center">
-              <p className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
-                Via Detour
-              </p>
-              <p className="font-mono text-xl font-bold tabular-nums">
-                {diversion.detour_minutes}
-                <span className="text-xs font-normal text-muted-foreground"> min</span>
-              </p>
+            <div className="flex justify-between gap-4 py-3 border-b border-mid">
+              <dt className="text-ink-secondary">Added delay</dt>
+              <dd className="font-bold tabular-nums">
+                <span className="bg-tag-orange-bg text-tag-orange-text px-2 py-1 text-xs uppercase tracking-wide">
+                  +{diversion.added_minutes} min
+                </span>
+              </dd>
             </div>
-          </div>
+          </dl>
         </>
       ) : null}
 
-      {/* Note */}
-      <div className="px-4 py-3">
-        <p className="text-[10px] text-muted-foreground leading-relaxed">
-          <span className="text-[#ea580c] font-bold">* </span>
-          {diversion.note}
-        </p>
-      </div>
-    </div>
+      <p className="text-sm text-ink-secondary mt-4 border-l-4 border-mid pl-4 py-1">{diversion.note}</p>
+    </section>
   )
 }

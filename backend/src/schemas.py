@@ -20,12 +20,25 @@ class IncidentInput(BaseModel):
     junction: str
     hour_of_day: int = Field(..., ge=0, le=23, example=14)
     day_of_week: int = Field(..., ge=0, le=6, example=2)
+    planned: bool = False
 
 
 class FeatureImportanceItem(BaseModel):
     """Item representing a feature name and its calculated model importance."""
     feature: str
     importance: float
+
+
+class ImpactAssessment(BaseModel):
+    """Officer-facing impact, combining the ML severity with the domain playbook."""
+    effective_severity_class: int
+    effective_severity_label: str
+    is_planned: bool
+    policy_elevated: bool
+    headline: str
+    summary: str
+    posture: str
+    watch_fors: List[str]
 
 
 class PredictionResponse(BaseModel):
@@ -44,6 +57,7 @@ class PredictionResponse(BaseModel):
     cv_f1_mean: float
     cv_f1_std: float
     feature_importances: List[FeatureImportanceItem]
+    impact: ImpactAssessment
 
 
 class NodeAllocation(BaseModel):
@@ -54,6 +68,46 @@ class NodeAllocation(BaseModel):
     resource_type: str       # "officer" | "barricade"
     quantity: int
     reason: str
+    latitude: float
+    longitude: float
+
+
+class LocationOption(BaseModel):
+    """A named junction the officer can pick instead of typing coordinates."""
+    name: str
+    corridor: str
+    latitude: float
+    longitude: float
+
+
+class RoutePoint(BaseModel):
+    """A point on the diversion route, with coordinates for mapping."""
+    name: str
+    latitude: float
+    longitude: float
+
+
+class UpcomingEvent(BaseModel):
+    """An ingested upcoming/recent event (live news feed or curated watchlist)."""
+    title: str
+    source: str            # "live" | "curated"
+    url: Optional[str] = None
+    published: Optional[str] = None
+    event_cause: Optional[str] = None
+    planned: bool = False
+    location_name: Optional[str] = None
+    corridor: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    mappable: bool = False
+
+
+class UpcomingEventsResponse(BaseModel):
+    """Response from /events/upcoming."""
+    live_status: str
+    live_count: int
+    curated_count: int
+    events: List[UpcomingEvent]
 
 
 class AllocationRequest(BaseModel):
@@ -75,6 +129,9 @@ class DiversionPlan(BaseModel):
     intercept_at: Optional[str] = None
     rejoin_at: Optional[str] = None
     route: List[str]
+    route_points: List[RoutePoint] = []
+    blocked_latitude: Optional[float] = None
+    blocked_longitude: Optional[float] = None
     direct_minutes: float
     detour_minutes: float
     added_minutes: float

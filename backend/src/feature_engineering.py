@@ -122,6 +122,11 @@ def build_feature_vector(row: pd.Series, rates: dict, kmeans) -> dict:
         "priority_encoded": {"High": 2, "Medium": 1, "Low": 0}.get(
             str(row['priority']), 1
         ),
+        # Whether this is a pre-known (planned) event vs an unplanned incident.
+        # Lets the model learn the statistical difference directly from the data.
+        "is_planned": int(
+            str(row.get('event_type', 'unplanned')).strip().lower() == 'planned'
+        ),
         "zone_closure_rate": rates["zone_closure_rate"].get(
             row['zone'], fallback
         ),
@@ -186,7 +191,7 @@ if __name__ == "__main__":
     rates = compute_historical_rates(train_df, kmeans)
     X, y_class, y_dur = build_dataset(train_df, rates, kmeans)
 
-    assert X.shape[1] == 11, f"Expected 11 features, got {X.shape[1]}"
+    assert X.shape[1] == 12, f"Expected 12 features, got {X.shape[1]}"
     assert X.isnull().sum().sum() == 0, "Feature matrix has null values"
     assert y_class.between(0, 3).all(), "Severity class out of range"
     assert len(X) == len(y_class) == len(y_dur)

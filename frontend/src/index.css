@@ -2,37 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Geist Pixel Grid — the dot-matrix display face used for the FLOWITS
-   wordmark and the hero headlines (self-hosted, OFL licensed). */
 @font-face {
   font-family: 'Geist Pixel Grid';
   src: url('/fonts/GeistPixel-Grid.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-}
-
-@layer base {
-  :root {
-    --background: 43 23% 93%;
-    --foreground: 0 0% 4%;
-    --card: 43 23% 93%;
-    --card-foreground: 0 0% 4%;
-    --primary: 0 0% 4%;
-    --primary-foreground: 43 23% 93%;
-    --secondary: 0 0% 90%;
-    --secondary-foreground: 0 0% 4%;
-    --muted: 40 10% 85%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 20 90% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 75%;
-    --input: 0 0% 75%;
-    --ring: 0 0% 4%;
-    --radius: 0rem;
-  }
 }
 
 * {
@@ -43,70 +18,171 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  color: hsl(var(--foreground));
-  font-family: 'JetBrains Mono', monospace;
+  background-color: #f6f5f1;
+  color: #1a1a1a;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  /* Signature brutalist dot-grid — global and viewport-fixed so it stays
-     visible behind every section as you scroll. */
-  background-color: hsl(var(--background));
-  background-image: radial-gradient(circle, #b3afa0 1.4px, transparent 1.4px);
-  background-size: 22px 22px;
-  background-attachment: fixed;
 }
 
-/* Opt-in dot surface (kept for parity; body already paints it globally). */
-.dot-grid-bg {
-  background-image: radial-gradient(circle, #b3afa0 1.4px, transparent 1.4px);
-  background-size: 22px 22px;
+/* Flashcard — soft raised surface */
+.flashcard {
+  background: #ffffff;
+  border: 1px solid #e6e4de;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.flashcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.08);
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* Primary button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
 }
-::-webkit-scrollbar-track {
-  background: hsl(var(--background));
-  border-left: 2px solid hsl(var(--foreground));
+.btn-primary {
+  background: #ea580c;
+  color: #ffffff;
 }
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground));
+.btn-primary:hover {
+  background: #c2410c;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-ghost {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #e6e4de;
+}
+.btn-ghost:hover {
+  background: #f6f5f1;
 }
 
-/* Blinking square indicator */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.animate-blink {
-  animation: blink 1s step-end infinite;
+/* Sidebar slide */
+.sidebar {
+  transition: width 0.22s ease;
+  overflow: hidden;
 }
 
-/* Marquee (used by the status strip) */
+/* Bottom marquee */
 @keyframes marquee {
-  0% { transform: translateX(0%); }
+  0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.animate-marquee {
-  animation: marquee 28s linear infinite;
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
 }
 
-/* Square brutalist spinner */
-@keyframes spin-border {
-  to { transform: rotate(360deg); }
+/* Inputs */
+.field {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #d8d6cf;
+  border-radius: 10px;
+  outline: none;
 }
+.field:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+
+/* Compatibility classes for existing components (mapped to the one palette) */
+.gv-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  background: #ea580c;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.gv-button:hover { background: #c2410c; }
+.gv-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.gv-button-secondary {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #e6e4de;
+}
+.gv-button-secondary:hover { background: #f6f5f1; }
+.gv-input, .gv-select {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #d8d6cf;
+  border-radius: 10px;
+  outline: none;
+}
+.gv-input:focus, .gv-select:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+.gv-step {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 1;
+  border: 1px solid #d8d6cf;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.gv-step:hover { background: #f6f5f1; }
+
 .spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid hsl(var(--foreground));
-  border-top-color: #ea580c;
-  animation: spin-border 0.7s linear infinite;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
   display: inline-block;
   vertical-align: middle;
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-/* Remove number-input spin buttons for a cleaner mono field */
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+@media print {
+  body * { visibility: hidden; }
+  .briefing-report, .briefing-report * { visibility: visible; }
+  .briefing-report { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 24px; }
+  .no-print { display: none !important; }
 }

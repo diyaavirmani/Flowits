@@ -3,10 +3,15 @@ import type { AxiosResponse } from 'axios'
 import type {
   AllocationRequest,
   AllocationResponse,
+  CorridorProfile,
   FeedbackLogEntry,
+  IncidentContext,
   IncidentInput,
+  LocationOption,
   PredictionResponse,
   SampleIncident,
+  UpcomingEvent,
+  UpcomingEventsResponse,
 } from '../types'
 
 interface BackendPredictionResponse {
@@ -24,6 +29,7 @@ interface BackendPredictionResponse {
   cv_f1_mean?: number
   cv_f1_std?: number
   feature_importances: PredictionResponse['feature_importances']
+  impact: PredictionResponse['impact']
 }
 
 interface BackendSampleIncident {
@@ -117,6 +123,7 @@ const normalizePrediction = (
     model_cv_f1_std:
       prediction.model_cv_f1_std ?? prediction.cv_f1_std ?? 0,
     feature_importances: prediction.feature_importances,
+    impact: prediction.impact,
   }
 }
 
@@ -178,6 +185,73 @@ export const getSampleIncidents = async () => {
 }
 
 export const getCorridors = () => api.get<string[]>('/corridors')
+
+export const getLocations = () => api.get<LocationOption[]>('/locations')
+
+export const getCorridorProfile = (corridor: string) =>
+  api.get<CorridorProfile>('/corridor-profile', { params: { corridor } })
+
+export const getUpcomingEvents = () =>
+  api.get<UpcomingEventsResponse>('/events/upcoming')
+
+const causeLabels: Record<string, string> = {
+  sports_event: 'Sports / IPL event',
+  concert: 'Concert / celebrity event',
+  political_rally: 'Political rally',
+  festival: 'Festival / procession',
+  construction: 'Construction',
+  vehicle_breakdown: 'Vehicle breakdown',
+  accident: 'Road accident',
+  tree_fall: 'Tree fall',
+  road_damage: 'Road damage',
+  waterlogging: 'Waterlogging',
+  protest: 'Sudden gathering / protest',
+  others: 'Other',
+}
+
+// Run the full pipeline (predict -> allocate) for a mappable upcoming event.
+export async function analyzeEvent(ev: UpcomingEvent): Promise<{
+  prediction: PredictionResponse
+  allocation: AllocationResponse
+  context: IncidentContext
+}> {
+  const now = new Date()
+  const hour = now.getHours()
+  const day = (now.getDay() + 6) % 7
+  const input: IncidentInput = {
+    event_cause: ev.event_cause ?? 'others',
+    priority: 'Medium',
+    veh_type: 'unknown',
+    latitude: ev.latitude ?? 0,
+    longitude: ev.longitude ?? 0,
+    corridor: ev.corridor ?? 'unknown',
+    zone: 'unknown',
+    junction: ev.location_name ?? 'unknown',
+    hour_of_day: hour,
+    day_of_week: day,
+    planned: ev.planned,
+  }
+  const prediction = (await predict(input)).data
+  const allocation = (
+    await allocate({
+      incident_latitude: input.latitude,
+      incident_longitude: input.longitude,
+      corridor: input.corridor,
+      severity_class: prediction.impact.effective_severity_class,
+      available_officers: 6,
+      available_barricades: 4,
+    })
+  ).data
+  const context: IncidentContext = {
+    eventLabel: causeLabels[ev.event_cause ?? 'others'] ?? ev.event_cause ?? 'Event',
+    planned: ev.planned,
+    locationName: ev.location_name ?? 'Unknown',
+    corridor: ev.corridor ?? 'unknown',
+    hour,
+    day,
+  }
+  return { prediction, allocation, context }
+}
 
 export const predict = async (input: IncidentInput) => {
   const response = await api.post<BackendPredictionResponse>('/predict', input)

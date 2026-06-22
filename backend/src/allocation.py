@@ -132,6 +132,8 @@ def allocate_resources(
                 f"Ranked #{rank} by impact ({score:.2f}). "
                 f"Assigned officer due to high proximity impact."
             ),
+            "latitude": graph.nodes[node_id].get("lat", 0.0),
+            "longitude": graph.nodes[node_id].get("lng", 0.0),
         })
 
         officer_assigned_nodes.add(node_id)
@@ -178,6 +180,8 @@ def allocate_resources(
                 f"Assigned barricade due to bottleneck junction "
                 f"(in-degree >= {BOTTLENECK_IN_DEGREE})."
             ),
+            "latitude": graph.nodes[node_id].get("lat", 0.0),
+            "longitude": graph.nodes[node_id].get("lng", 0.0),
         })
 
         barricades_remaining -= barricades_to_assign
