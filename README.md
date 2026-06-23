@@ -20,9 +20,8 @@ An officer gives only three things: the event type, the location by name, and th
 
 | | |
 |---|---|
-| Live demo | _link to be added_ |
+| Live demo | https://flowits-production.up.railway.app/ |
 | Demo video | _link to be added_ |
-| Submission page | _link to be added_ |
 | Telegram bot | _coming soon (see section 6)_ |
 
 ---
