@@ -1,0 +1,112 @@
+<svg viewBox="0 0 1000 440" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Inter, Arial, sans-serif" role="img" aria-labelledby="st sd">
+  <title id="st">FLOWITS solution, sketch view</title>
+  <desc id="sd">A blueprint-style illustration of three stages connected by tubes: detection of an incident, a central engine that predicts and plans, and deployment with diversion as the output.</desc>
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0 H0 V20" fill="none" stroke="#d9dccf" stroke-width="1"/>
+    </pattern>
+    <pattern id="grid100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M100 0 H0 V100" fill="none" stroke="#cccfc3" stroke-width="1.2"/>
+    </pattern>
+    <filter id="sketch" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <!-- graph paper -->
+  <rect x="0" y="0" width="1000" height="440" fill="#ecefe8"/>
+  <rect x="0" y="0" width="1000" height="440" fill="url(#grid)"/>
+  <rect x="0" y="0" width="1000" height="440" fill="url(#grid100)"/>
+
+  <g filter="url(#sketch)" fill="none" stroke="#474c47" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- ===== TUBES ===== -->
+    <g stroke="none">
+      <path d="M250 206 C 312 206, 356 192, 430 190" stroke="#cdd1c6" stroke-width="22" fill="none" stroke-linecap="round"/>
+      <path d="M250 206 C 312 206, 356 192, 430 190" stroke="#e7e9e2" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M600 200 C 664 200, 700 184, 760 180" stroke="#cdd1c6" stroke-width="22" fill="none" stroke-linecap="round"/>
+      <path d="M600 200 C 664 200, 700 184, 760 180" stroke="#e7e9e2" stroke-width="9" fill="none" stroke-linecap="round"/>
+    </g>
+    <path d="M250 206 C 312 206, 356 192, 430 190" stroke="#9aa093" stroke-width="1.4"/>
+    <path d="M600 200 C 664 200, 700 184, 760 180" stroke="#9aa093" stroke-width="1.4"/>
+    <!-- couplings -->
+    <rect x="244" y="194" width="12" height="24" rx="3" fill="#dfe2da"/>
+    <rect x="424" y="178" width="12" height="24" rx="3" fill="#dfe2da"/>
+    <rect x="594" y="188" width="12" height="24" rx="3" fill="#dfe2da"/>
+    <rect x="754" y="168" width="12" height="24" rx="3" fill="#dfe2da"/>
+
+    <!-- ===== STAGE 1: DETECTION ===== -->
+    <!-- small gear -->
+    <g stroke-width="2">
+      <line x1="136" y1="126" x2="142" y2="126"/><line x1="130.7" y1="138.7" x2="135" y2="143"/>
+      <line x1="118" y1="144" x2="118" y2="150"/><line x1="105.3" y1="138.7" x2="101" y2="143"/>
+      <line x1="100" y1="126" x2="94" y2="126"/><line x1="105.3" y1="113.3" x2="101" y2="109"/>
+      <line x1="118" y1="108" x2="118" y2="102"/><line x1="130.7" y1="113.3" x2="135" y2="109"/>
+    </g>
+    <circle cx="118" cy="126" r="18" fill="#dfe2da"/>
+    <circle cx="118" cy="126" r="4" fill="#ea580c" stroke="none"/>
+    <!-- document card (iso) -->
+    <polygon points="150,160 230,160 244,148 164,148" fill="#e7e9e2"/>
+    <polygon points="230,160 244,148 244,250 230,262" fill="#cdd1c6"/>
+    <rect x="150" y="160" width="80" height="102" fill="#dfe2da"/>
+    <line x1="164" y1="182" x2="216" y2="182"/>
+    <line x1="164" y1="200" x2="216" y2="200"/>
+    <line x1="164" y1="218" x2="200" y2="218"/>
+    <!-- location pin -->
+    <path d="M188 120 C 176 120, 176 136, 188 148 C 200 136, 200 120, 188 120 Z" fill="#fff1e9"/>
+    <circle cx="188" cy="132" r="4.5" fill="#ea580c" stroke="none"/>
+    <!-- magnifier -->
+    <circle cx="226" cy="224" r="26" fill="#eef0ea"/>
+    <path d="M214 214 a16 16 0 0 1 8 -6" stroke-width="1.6"/>
+    <line x1="246" y1="244" x2="270" y2="268" stroke-width="6"/>
+
+    <!-- ===== STAGE 2: ENGINE ===== -->
+    <!-- gear on top -->
+    <g stroke-width="2">
+      <line x1="529" y1="150" x2="534" y2="150"/><line x1="525" y1="160" x2="528.5" y2="163.5"/>
+      <line x1="515" y1="164" x2="515" y2="169"/><line x1="505" y1="160" x2="501.5" y2="163.5"/>
+      <line x1="501" y1="150" x2="496" y2="150"/><line x1="505" y1="140" x2="501.5" y2="136.5"/>
+      <line x1="515" y1="136" x2="515" y2="131"/><line x1="525" y1="140" x2="528.5" y2="136.5"/>
+    </g>
+    <circle cx="515" cy="150" r="14" fill="#dfe2da"/>
+    <circle cx="515" cy="150" r="3.5" fill="#ea580c" stroke="none"/>
+    <!-- iso engine box -->
+    <polygon points="460,176 546,176 566,160 480,160" fill="#e7e9e2"/>
+    <polygon points="546,176 566,160 566,224 546,240" fill="#cdd1c6"/>
+    <rect x="460" y="176" width="86" height="64" fill="#dfe2da"/>
+    <!-- route sketch on front -->
+    <polyline points="472,224 488,210 506,222 524,206 538,214" stroke-width="1.8"/>
+    <circle cx="472" cy="224" r="3" fill="#474c47"/>
+    <circle cx="506" cy="222" r="3" fill="#474c47"/>
+    <circle cx="538" cy="214" r="3.5" fill="#ea580c" stroke="none"/>
+    <!-- database cylinder -->
+    <ellipse cx="590" cy="194" rx="18" ry="5.5" fill="#e7e9e2"/>
+    <path d="M572 194 V 226 a18 5.5 0 0 0 36 0 V 194" fill="#dfe2da"/>
+    <path d="M572 210 a18 5.5 0 0 0 36 0" stroke-width="1.4"/>
+    <!-- back wires -->
+    <path d="M566 184 C 584 180, 590 176, 600 176" stroke-width="1.6"/>
+    <path d="M566 196 C 586 196, 592 192, 600 190" stroke-width="1.6"/>
+
+    <!-- ===== STAGE 3: DEPLOYMENT & DIVERSION ===== -->
+    <!-- map tile with reroute arrow (behind-left) -->
+    <polygon points="772,196 818,190 818,234 772,240" fill="#e7e9e2"/>
+    <line x1="784" y1="192" x2="784" y2="238" stroke-width="1.2"/>
+    <line x1="802" y1="191" x2="802" y2="236" stroke-width="1.2"/>
+    <path d="M780 226 L780 212 Q780 204 790 204 L804 204" stroke="#ea580c" stroke-width="2.4"/>
+    <path d="M798 198 L808 204 L798 210" stroke="#ea580c" stroke-width="2.4"/>
+    <!-- shield badge -->
+    <path d="M848 128 L884 140 L884 176 Q884 208 848 226 Q812 208 812 176 L812 140 Z" fill="#dfe2da"/>
+    <path d="M848 150 l6.5 13 14 1.5 -10.5 9.5 3 14 -13 -7.5 -13 7.5 3 -14 -10.5 -9.5 14 -1.5 z" fill="#fff1e9" stroke-width="1.6"/>
+
+  </g>
+
+  <!-- ===== LABELS (outside sketch filter for legibility) ===== -->
+  <g fill="#3a3f3a" font-weight="700" letter-spacing="0.08em" text-anchor="middle">
+    <text x="175" y="396" font-size="20">DETECTION</text>
+    <text x="510" y="386" font-size="20">PREDICTION &amp;</text>
+    <text x="510" y="410" font-size="20">PLANNING</text>
+    <text x="838" y="386" font-size="20">DEPLOYMENT &amp;</text>
+    <text x="838" y="410" font-size="20">DIVERSION</text>
+  </g>
+</svg>

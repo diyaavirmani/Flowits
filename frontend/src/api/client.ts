@@ -171,11 +171,23 @@ export const getModelInfo = () =>
   api.get<{
     classifier_f1: number
     classifier_auc: number
+    classifier_accuracy: number
+    classifier_training_rows: number
+    classifier_test_rows: number
+    per_class_f1: Record<string, number>
     cv_f1_mean: number
     cv_f1_std: number
+    cv_auc_mean: number
+    cv_auc_std: number
+    cv_folds: number
     regressor_mae: number
     regressor_rmse: number
+    regressor_training_rows: number
     n_features: number
+    feature_columns: string[]
+    feature_importances: { feature: string; importance: number }[]
+    class_labels: Record<string, string>
+    class_distribution: Record<string, number>
     performance_notes: string[]
   }>('/model-info')
 

@@ -29,3 +29,6 @@ frontend-render.png
 # OS files
 .DS_Store
 Thumbs.db
+
+# Generated submission screenshots
+screenshots/

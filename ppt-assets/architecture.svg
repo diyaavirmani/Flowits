@@ -1,0 +1,128 @@
+<svg viewBox="0 0 1240 740" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Inter, Arial, sans-serif" role="img" aria-labelledby="at ad">
+  <title id="at">FLOWITS system architecture</title>
+  <desc id="ad">An incident or event comes in, a severity engine runs, the FLOWITS engine orchestrates a deployment planner and a diversion planner, and the officer gets a plan. An incident database and outcome feedback retrain the model, and a live news feed supplies upcoming events.</desc>
+  <defs>
+    <pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0 H0 V22" fill="none" stroke="#e7e7e0" stroke-width="1"/></pattern>
+    <pattern id="gridM" width="110" height="110" patternUnits="userSpaceOnUse"><path d="M110 0 H0 V110" fill="none" stroke="#dcdcd0" stroke-width="1.2"/></pattern>
+    <marker id="blu" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="grn" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#16a34a"/></marker>
+    <marker id="org" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f97316"/></marker>
+  </defs>
+
+  <rect width="1240" height="740" fill="#f7f7f3"/>
+  <rect width="1240" height="740" fill="url(#grid)"/>
+  <rect width="1240" height="740" fill="url(#gridM)"/>
+
+  <!-- title -->
+  <rect x="440" y="16" width="360" height="46" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="620" y="46" text-anchor="middle" fill="#1f2937" font-size="22" font-weight="800" letter-spacing="0.06em">SYSTEM ARCHITECTURE</text>
+
+  <!-- legend -->
+  <rect x="985" y="84" width="245" height="150" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="1002" y="108" fill="#64748b" font-size="11" font-weight="700" letter-spacing="0.1em">LEGEND</text>
+  <circle cx="1009" cy="128" r="7" fill="#3b82f6"/><text x="1024" y="133" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Model</tspan> = prediction</text>
+  <circle cx="1009" cy="154" r="7" fill="#f97316"/><text x="1024" y="159" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Data</tspan> = information flow</text>
+  <circle cx="1009" cy="180" r="7" fill="#22c55e"/><text x="1024" y="185" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Output</tspan> = plan delivered</text>
+  <circle cx="1009" cy="206" r="7" fill="none" stroke="#16a34a" stroke-width="2.4"/><text x="1024" y="211" fill="#1f2937" font-size="12.5"><tspan font-weight="700">FLOWITS</tspan> = coordinator</text>
+
+  <!-- live feed (input source) -->
+  <rect x="40" y="90" width="250" height="50" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="56" y="113" fill="#c2410c" font-size="13" font-weight="700">LIVE EVENT FEED</text>
+  <text x="56" y="130" fill="#9a6a44" font-size="10.5">Google News RSS, upcoming events</text>
+  <line x1="292" y1="115" x2="466" y2="115" stroke="#f97316" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#org)"/>
+
+  <!-- INCOMING -->
+  <rect x="470" y="88" width="300" height="56" rx="12" fill="#ffedd5" stroke="#fb923c" stroke-width="1.6"/>
+  <path d="M494 108 h14 v12 h-14 z M494 108 l7 6 l7 -6" fill="none" stroke="#c2410c" stroke-width="1.6" stroke-linejoin="round"/>
+  <text x="620" y="111" text-anchor="middle" fill="#7c2d12" font-size="15" font-weight="800">INCOMING EVENT</text>
+  <text x="620" y="129" text-anchor="middle" fill="#9a6a44" font-size="11">officer reports type, location, time</text>
+  <line x1="620" y1="144" x2="620" y2="174" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+
+  <!-- STAGE 1 -->
+  <rect x="445" y="176" width="350" height="116" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <rect x="445" y="176" width="350" height="30" rx="12" fill="#1f2937"/><rect x="445" y="194" width="350" height="12" fill="#1f2937"/>
+  <circle cx="465" cy="190" r="5" fill="none" stroke="#ffffff" stroke-width="1.6"/><line x1="469" y1="194" x2="473" y2="198" stroke="#ffffff" stroke-width="1.6"/>
+  <text x="482" y="196" fill="#ffffff" font-size="13" font-weight="700">STAGE 1: SEVERITY ENGINE</text>
+  <rect x="701" y="181" width="86" height="24" rx="12" fill="#16a34a"/><text x="744" y="198" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">F1 0.859</text>
+  <text x="461" y="230" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Job:</tspan> how severe, and how long</text>
+  <text x="461" y="250" fill="#1f2937" font-size="12.5" font-weight="700">Technology:</text>
+  <text x="461" y="268" fill="#475569" font-size="12">• Gradient Boosting (scikit-learn)</text>
+  <text x="461" y="285" fill="#475569" font-size="12">• 12 features · K-Means zones</text>
+  <line x1="620" y1="292" x2="620" y2="372" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+  <rect x="626" y="320" width="132" height="18" fill="#f7f7f3"/>
+  <text x="630" y="334" fill="#2563eb" font-size="11" font-weight="600">severity + duration</text>
+
+  <!-- ENGINE (orchestration core) -->
+  <rect x="510" y="372" width="220" height="96" rx="14" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+  <g stroke="#1f2937" stroke-width="2.2" stroke-linecap="round">
+    <line x1="632" y1="404" x2="637" y2="404"/><line x1="628.6" y1="412.1" x2="631.9" y2="415.4"/>
+    <line x1="620" y1="415.5" x2="620" y2="420.5"/><line x1="611.4" y1="412.1" x2="608.1" y2="415.4"/>
+    <line x1="608" y1="404" x2="603" y2="404"/><line x1="611.4" y1="395.9" x2="608.1" y2="392.6"/>
+    <line x1="620" y1="392.5" x2="620" y2="387.5"/><line x1="628.6" y1="395.9" x2="631.9" y2="392.6"/>
+  </g>
+  <circle cx="620" cy="404" r="11" fill="none" stroke="#1f2937" stroke-width="2"/><circle cx="620" cy="404" r="4" fill="#f97316"/>
+  <text x="620" y="446" text-anchor="middle" fill="#7c2d12" font-size="15" font-weight="800">FLOWITS ENGINE</text>
+  <text x="620" y="462" text-anchor="middle" fill="#9a6a44" font-size="11">Orchestration</text>
+
+  <!-- STAGE 2 (left) -->
+  <rect x="60" y="360" width="320" height="130" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <rect x="60" y="360" width="320" height="30" rx="12" fill="#1f2937"/><rect x="60" y="378" width="320" height="12" fill="#1f2937"/>
+  <circle cx="78" cy="374" r="2.4" fill="#ffffff"/><circle cx="85" cy="374" r="2.4" fill="#ffffff"/><circle cx="81.5" cy="380" r="2.4" fill="#ffffff"/>
+  <text x="96" y="380" fill="#ffffff" font-size="13" font-weight="700">STAGE 2: DEPLOYMENT PLANNER</text>
+  <text x="76" y="414" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Job:</tspan> place officers and barricades</text>
+  <text x="76" y="434" fill="#1f2937" font-size="12.5" font-weight="700">Technology:</text>
+  <text x="76" y="452" fill="#475569" font-size="12">• NetworkX corridor graph</text>
+  <text x="76" y="469" fill="#475569" font-size="12">• Greedy impact ranking</text>
+
+  <!-- STAGE 3 (right) -->
+  <rect x="860" y="360" width="320" height="130" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <rect x="860" y="360" width="320" height="30" rx="12" fill="#1f2937"/><rect x="860" y="378" width="320" height="12" fill="#1f2937"/>
+  <path d="M874 380 l5 -6 l5 6" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="879" y1="380" x2="879" y2="372" stroke="#ffffff" stroke-width="1.6"/>
+  <text x="894" y="380" fill="#ffffff" font-size="13" font-weight="700">STAGE 3: DIVERSION PLANNER</text>
+  <text x="876" y="414" fill="#1f2937" font-size="12.5"><tspan font-weight="700">Job:</tspan> reroute the public</text>
+  <text x="876" y="434" fill="#1f2937" font-size="12.5" font-weight="700">Technology:</text>
+  <text x="876" y="452" fill="#475569" font-size="12">• Dijkstra shortest path</text>
+  <text x="876" y="469" fill="#475569" font-size="12">• Bypass network · live map</text>
+
+  <!-- engine <-> planners -->
+  <rect x="402" y="402" width="106" height="18" fill="#f7f7f3"/>
+  <text x="455" y="416" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="600">Allocation plan</text>
+  <line x1="508" y1="426" x2="382" y2="426" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+  <rect x="734" y="402" width="98" height="18" fill="#f7f7f3"/>
+  <text x="783" y="416" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600">Reroute path</text>
+  <line x1="732" y1="426" x2="858" y2="426" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#grn)"/>
+
+  <!-- planners/engine -> bottom -->
+  <line x1="220" y1="490" x2="220" y2="558" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+  <line x1="620" y1="468" x2="620" y2="570" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+  <line x1="1020" y1="490" x2="1020" y2="558" stroke="#2563eb" stroke-width="1.8" marker-end="url(#blu)"/>
+
+  <!-- INCIDENT DATABASE (bottom-left) -->
+  <rect x="60" y="560" width="320" height="140" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <rect x="60" y="560" width="320" height="30" rx="12" fill="#1f2937"/><rect x="60" y="578" width="320" height="12" fill="#1f2937"/>
+  <ellipse cx="80" cy="572" rx="6" ry="2.4" fill="none" stroke="#ffffff" stroke-width="1.4"/><path d="M74 572 v6 a6 2.4 0 0 0 12 0 v-6" fill="none" stroke="#ffffff" stroke-width="1.4"/>
+  <text x="96" y="580" fill="#ffffff" font-size="13" font-weight="700">INCIDENT DATABASE</text>
+  <text x="76" y="616" fill="#475569" font-size="12.5">• 8,057 incident dataset</text>
+  <text x="76" y="638" fill="#475569" font-size="12.5">• Outcome feedback log</text>
+  <text x="76" y="660" fill="#475569" font-size="12.5">• Model artifacts (.pkl)</text>
+
+  <!-- BRIEFING (bottom-center, green output) -->
+  <rect x="470" y="572" width="300" height="110" rx="12" fill="#16a34a"/>
+  <text x="620" y="612" text-anchor="middle" fill="#ffffff" font-size="14.5" font-weight="800">BRIEFING TO CONTROL ROOM</text>
+  <text x="620" y="636" text-anchor="middle" fill="#dcfce7" font-size="12">One-click PDF and peak-risk chart</text>
+  <text x="620" y="656" text-anchor="middle" fill="#dcfce7" font-size="12">Officer orders, ready to act</text>
+
+  <!-- RESPONSE (bottom-right, orange output) -->
+  <rect x="860" y="560" width="320" height="140" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+  <rect x="860" y="560" width="320" height="30" rx="12" fill="#f97316"/><rect x="860" y="578" width="320" height="12" fill="#f97316"/>
+  <path d="M876 569 h10 v12 h-10 z" fill="none" stroke="#ffffff" stroke-width="1.4"/><path d="M879 574 l2 2 l4 -4" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="896" y="580" fill="#ffffff" font-size="13" font-weight="700">RESPONSE TO OFFICER</text>
+  <text x="876" y="616" fill="#475569" font-size="12.5">• Impact assessment</text>
+  <text x="876" y="638" fill="#475569" font-size="12.5">• Deployment + diversion map</text>
+  <text x="876" y="660" fill="#475569" font-size="12.5">• Printable briefing</text>
+
+  <!-- retrain feedback loop -->
+  <path d="M380 600 C 470 600, 512 520, 512 448" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#grn)"/>
+  <rect x="430" y="556" width="58" height="18" fill="#f7f7f3"/>
+  <text x="459" y="570" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600">retrain</text>
+</svg>

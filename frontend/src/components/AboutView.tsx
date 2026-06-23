@@ -37,7 +37,8 @@ export default function AboutView() {
 
       {/* Performance */}
       <div className="flashcard p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-3">Performance</h2>
+        <h2 className="text-lg font-semibold mb-1">Model performance and training</h2>
+        <p className="text-muted text-sm mb-4">Trained and validated on real incident data. Every figure is read from the model's own record.</p>
         <ModelManifest />
       </div>
 

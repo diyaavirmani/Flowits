@@ -47,6 +47,55 @@ function NavIcon({ name }: { name: View | 'help' }) {
   return <svg width={20} height={20} viewBox="0 0 24 24">{map[name]}</svg>
 }
 
+// Defined at module scope (not inside AppShell) so their identity is stable.
+// When these lived inside the component, every state change gave them a new
+// identity and React remounted IncidentInputForm, wiping the officer's inputs.
+function ResultsPanel({
+  prediction,
+  allocation,
+  onGenerate,
+}: {
+  prediction: PredictionResponse | null
+  allocation: AllocationResponse | null
+  onGenerate: () => void
+}) {
+  if (!prediction || !allocation) return <EmptyState />
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-end">
+        <button type="button" onClick={onGenerate} className="gv-button gv-button-secondary">
+          Generate briefing report
+        </button>
+      </div>
+      <ImpactCard prediction={prediction} />
+      <MapCard allocation={allocation} />
+      <DeploymentCard allocation={allocation} />
+      <DiversionCard diversion={allocation.diversion} />
+    </div>
+  )
+}
+
+function ConsolePanel({
+  onResult,
+  prediction,
+  allocation,
+  onGenerate,
+}: {
+  onResult: (p: PredictionResponse, a: AllocationResponse, c: IncidentContext) => void
+  prediction: PredictionResponse | null
+  allocation: AllocationResponse | null
+  onGenerate: () => void
+}) {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,400px)_1fr] gap-8 items-start">
+      <IncidentInputForm onResult={onResult} />
+      <div id="analysis-results" className="min-w-0">
+        <ResultsPanel prediction={prediction} allocation={allocation} onGenerate={onGenerate} />
+      </div>
+    </div>
+  )
+}
+
 export default function AppShell() {
   const [view, setView] = useState<View>('home')
   const [expanded, setExpanded] = useState(false)
@@ -69,42 +118,26 @@ export default function AppShell() {
     { key: 'about', label: 'About the model' },
   ]
 
-  const Results = () =>
-    prediction && allocation ? (
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-end">
-          <button type="button" onClick={() => setShowReport(true)} className="gv-button gv-button-secondary">
-            Generate briefing report
-          </button>
-        </div>
-        <ImpactCard prediction={prediction} />
-        <MapCard allocation={allocation} />
-        <DeploymentCard allocation={allocation} />
-        <DiversionCard diversion={allocation.diversion} />
-      </div>
-    ) : (
-      <EmptyState />
-    )
-
-  const Console = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,400px)_1fr] gap-8 items-start">
-      <IncidentInputForm onResult={handleResult} />
-      <div id="analysis-results" className="min-w-0">
-        <Results />
-      </div>
-    </div>
-  )
-
   const renderView = () => {
+    const onGenerate = () => setShowReport(true)
     switch (view) {
       case 'home':
         return <HomeView />
       case 'dashboard':
         return <DashboardView />
       case 'planned':
-        return <UpcomingEvents onResult={handleResult} />
+        return (
+          <div className="flex flex-col gap-10">
+            <UpcomingEvents onResult={handleResult} />
+            <div id="analysis-results" className="min-w-0">
+              <ResultsPanel prediction={prediction} allocation={allocation} onGenerate={onGenerate} />
+            </div>
+          </div>
+        )
       case 'unplanned':
-        return <Console />
+        return (
+          <ConsolePanel onResult={handleResult} prediction={prediction} allocation={allocation} onGenerate={onGenerate} />
+        )
       case 'about':
         return <AboutView />
       case 'events':
@@ -112,7 +145,7 @@ export default function AppShell() {
         return (
           <div className="flex flex-col gap-10">
             <UpcomingEvents onResult={handleResult} />
-            <Console />
+            <ConsolePanel onResult={handleResult} prediction={prediction} allocation={allocation} onGenerate={onGenerate} />
           </div>
         )
     }
