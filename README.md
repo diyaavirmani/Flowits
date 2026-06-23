@@ -39,7 +39,7 @@ An incoming event runs through the **Severity Engine**, the **FLOWITS Engine** o
 ## 4. How it works
 
 <div align="center">
-<img src="images/how-it-works.svg" width="860" alt="How FLOWITS works" />
+<img src="images/howitworks.png" width="860" alt="How FLOWITS works" />
 </div>
 
 1. **Report incident.** The officer enters event type, location, and time.
@@ -48,13 +48,6 @@ An incoming event runs through the **Severity Engine**, the **FLOWITS Engine** o
 4. **Plan diversion.** A reroute is drawn around the blockage on a live map.
 5. **Congestion eased.** The outcome is logged and feeds back into the model.
 
-A second, illustrative view of the same flow:
-
-<div align="center">
-<img src="images/solution-sketch.svg" width="720" alt="FLOWITS solution overview" />
-</div>
-
----
 
 ## 5. Approach
 
