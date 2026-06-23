@@ -74,10 +74,42 @@ The models are trained on a dataset of **8,057 real Bengaluru traffic incidents*
 
 ### Metrics (reported honestly)
 
-- **Cross-validated F1 of 0.859** (5-fold, plus or minus 0.009, so performance is stable), **ROC AUC of 0.974**.
-- **Per-class F1:** Monitor 0.87, Single officer 0.92, Standard 0.38, Maximum 0.26. We **show** the weakness on the two rare high-severity classes instead of hiding it, and the app tells the officer to confirm those on the ground.
-- **Duration MAE of about 52 minutes** (RMSE about 80 minutes).
-- We publish the **confusion matrix** and the **feature importances** (reported priority and the historical closure rates carry most of the signal).
+**Severity classifier (four classes), validated with 5-fold cross-validation:**
+
+| Metric | Value |
+|---|---|
+| Cross-validated F1 (weighted) | **0.859** (plus or minus 0.009) |
+| ROC AUC (one vs rest) | **0.974** |
+| Accuracy | 0.83 |
+| Training / test incidents | 6,445 / 1,612 |
+
+**Per-class F1.** The two high-severity classes are rare in the data, and we show that weakness rather than hide it. The app asks an officer to confirm those on the ground.
+
+| Class | Response | F1 |
+|---|---|---|
+| 0 | Monitor only | 0.87 |
+| 1 | Single officer | 0.92 |
+| 2 | Standard response | 0.38 |
+| 3 | Maximum response | 0.26 |
+
+**Duration regressor:**
+
+| Metric | Value |
+|---|---|
+| Mean absolute error (MAE) | about 52 minutes |
+| Root mean squared error (RMSE) | about 80 minutes |
+
+**Top feature importances** (what drives the severity forecast):
+
+| Feature | Importance |
+|---|---|
+| Reported priority | 48% |
+| Cause closure rate | 16% |
+| Junction closure rate | 12% |
+| Corridor closure rate | 6% |
+| Hour of day | 5% |
+
+The full **confusion matrix** is published on the About page for transparency.
 
 ### The domain playbook (why the model alone is not enough)
 
@@ -85,7 +117,16 @@ Statistics cannot know that an IPL match or a political rally is inherently high
 
 ### Planning: manpower and barricades
 
-Each supported corridor is modelled as a **NetworkX directed graph** of junctions. An impact score spreads from the incident to nearby and downstream junctions. A **greedy allocator** then places officers on the highest-impact junctions first, and barricades on the **bottleneck junctions** (in-degree of 2 or more, where traffic streams merge). The size of the resource pool scales with the model's severity class (0, 1, 3, or 6 officers from Monitor up to Maximum). Finally we compute a **before-and-after risk reduction** so the officer can see the value of the plan (a stated 35 percent mitigation per resourced junction, pending calibration against real deployment data).
+Each supported corridor is modelled as a **NetworkX directed graph** of junctions. An impact score spreads from the incident to nearby and downstream junctions. A **greedy allocator** then places officers on the highest-impact junctions first, and barricades on the **bottleneck junctions** (in-degree of 2 or more, where traffic streams merge). The size of the resource pool scales with the model's severity class:
+
+| Severity class | Officers | Barricades |
+|---|---|---|
+| Monitor only | 0 | 0 |
+| Single officer | 1 | 0 |
+| Standard response | 3 | 2 |
+| Maximum response | 6 | 4 |
+
+Finally we compute a **before-and-after risk reduction** so the officer can see the value of the plan (a stated 35 percent mitigation per resourced junction, pending calibration against real deployment data).
 
 ### Routing: the public diversion (Dijkstra)
 
