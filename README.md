@@ -1,12 +1,8 @@
-<div align="center">
+
 
 # FLOWITS
 
-### Predict. Deploy. Mitigate.
-
 Decision support for event-driven traffic congestion, planned and unplanned.
-
-</div>
 
 ---
 
