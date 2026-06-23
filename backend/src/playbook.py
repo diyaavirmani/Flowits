@@ -30,7 +30,7 @@ CAUSE_PROFILE: Dict[str, dict] = {
             "Large crowd surge at stadium access points",
             "Elevated pickpocketing and petty-theft risk",
             "Scuffles and road-rage near choke points",
-            "Post-event exit wave — second congestion spike",
+            "Post-event exit wave, a second congestion spike",
         ],
     },
     "concert": {
@@ -142,7 +142,7 @@ def _headline(effective: int, is_planned: bool) -> str:
         return "Significant disruption likely"
     if effective == 1:
         return "Moderate, localised disruption"
-    return "Minor — monitor only"
+    return "Minor, monitor only"
 
 
 def assess_impact(
@@ -168,7 +168,7 @@ def assess_impact(
     if is_peak_hour and effective >= 2:
         watch_fors.append("Peak-hour timing amplifies queue build-up")
     if (not is_planned) and hour_of_day in _NIGHT_HOURS and effective >= 2:
-        watch_fors.append("Night-time gathering — heightened theft / altercation risk")
+        watch_fors.append("Night-time gathering, heightened theft or altercation risk")
 
     posture = (
         "High alert" if effective >= 3 else "Heightened watch" if effective == 2 else "Standard watch"
@@ -191,7 +191,7 @@ def assess_impact(
     elif effective == 1:
         summary = (
             f"A {cause_label} here is usually contained but can block a lane for about {dur} "
-            f"minutes — a single officer should manage and reassess."
+            f"minutes. A single officer should manage and reassess."
         )
     else:
         summary = (

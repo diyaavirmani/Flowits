@@ -25,31 +25,32 @@ export default function DashboardView() {
   const [m, setM] = useState<Metrics>({ f1: 0, features: 0, liveCount: 0, plannable: 0, accuracy: 0 })
   const [hourly, setHourly] = useState<{ hour: number; count: number }[]>([])
   const [mix, setMix] = useState<{ name: string; value: number }[]>([])
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
 
   useEffect(() => {
     let active = true
-    const loadEvents = async () => {
+    // Live figures: refreshed on an interval.
+    const refresh = async () => {
       try {
-        const ev = await getUpcomingEvents()
+        const [ev, fb] = await Promise.all([getUpcomingEvents(), getFeedbackHistory()])
         if (!active) return
         setM((prev) => ({
           ...prev,
           liveCount: ev.data.live_count,
           plannable: ev.data.events.filter((e) => e.mappable).length,
+          accuracy: fb.data.running_accuracy,
         }))
+        setUpdatedAt(new Date())
       } catch {
         /* ignore */
       }
     }
+    // Static figures: loaded once.
     const loadStatic = async () => {
       try {
-        const [info, prof, fb] = await Promise.all([
-          getModelInfo(),
-          getCorridorProfile('Hosur Road'),
-          getFeedbackHistory(),
-        ])
+        const [info, prof] = await Promise.all([getModelInfo(), getCorridorProfile('Hosur Road')])
         if (!active) return
-        setM((prev) => ({ ...prev, f1: info.data.classifier_f1, features: info.data.n_features, accuracy: fb.data.running_accuracy }))
+        setM((prev) => ({ ...prev, f1: info.data.classifier_f1, features: info.data.n_features }))
         setHourly(prof.data.hourly)
         setMix([
           { name: 'Unplanned', value: 7706 },
@@ -59,9 +60,9 @@ export default function DashboardView() {
         /* ignore */
       }
     }
-    loadEvents()
     loadStatic()
-    const id = window.setInterval(loadEvents, 30000)
+    refresh()
+    const id = window.setInterval(refresh, 15000)
     return () => {
       active = false
       window.clearInterval(id)
@@ -72,8 +73,14 @@ export default function DashboardView() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1">Operational dashboard</h1>
-      <p className="text-muted mb-6">Live figures update as data arrives.</p>
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+        <h1 className="text-2xl font-bold">Operational dashboard</h1>
+        <span className="flex items-center gap-2 text-sm text-muted">
+          <span className="w-2 h-2 rounded-full bg-ok animate-pulse" />
+          Live{updatedAt ? ` · updated ${updatedAt.toLocaleTimeString()}` : ''}
+        </span>
+      </div>
+      <p className="text-muted mb-6">Live figures refresh automatically every few seconds.</p>
 
       {/* Flashcard metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -13,23 +13,34 @@ curated list instead of breaking the app.
 import time
 import urllib.request
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import List, Optional
 
-# location keyword -> (junction label, corridor, lat, lng)
+# Area keyword -> (junction label, corridor, lat, lng). Broadened so real news
+# mentioning a recognisable area near a supported corridor becomes plannable.
+_HOSUR = ("Silk Board Junction", "Hosur Road", 12.9197, 77.6211)
+_BELLARY = ("Hebbal Flyover Junction", "Bellary Road 1", 13.0426, 77.5906)
+_TUMKUR = ("SRS Peenya Junction", "Tumkur Road", 13.0346, 77.5299)
+
 LOCATION_ALIASES = [
+    # ── Hosur Road corridor (south / south-east) ──
     (["silk board", "silkboard"], ("Silk Board Junction", "Hosur Road", 12.9197, 77.6211)),
     (["bommanahalli"], ("Bommanahalli", "Hosur Road", 12.9069, 77.6281)),
     (["kudlu"], ("Kudlu Gate Junction", "Hosur Road", 12.8892, 77.6396)),
-    (["electronic city", "electronics city", "e-city"], ("Naganathapura Junction", "Hosur Road", 12.8698, 77.6532)),
-    (["hosur road"], ("Silk Board Junction", "Hosur Road", 12.9197, 77.6211)),
+    (["electronic city", "electronics city", "e-city", "bommasandra"], ("Naganathapura Junction", "Hosur Road", 12.8698, 77.6532)),
+    (["hosur road", "koramangala", "btm", "hsr", "madiwala", "sarjapur", "begur"], _HOSUR),
+    (["chinnaswamy", "cubbon", "mg road"], _HOSUR),
+    # ── Bellary Road corridor (north) ──
     (["hebbal"], ("Hebbal Flyover Junction", "Bellary Road 1", 13.0426, 77.5906)),
     (["mekhri"], ("Mekhri Circle", "Bellary Road 1", 13.0146, 77.5839)),
     (["yelahanka"], ("Yelahanka Circle", "Bellary Road 1", 13.0976, 77.5919)),
-    (["bellary road"], ("Mekhri Circle", "Bellary Road 1", 13.0146, 77.5839)),
+    (["bellary road", "airport road", "hennur", "sadashivanagar", "sanjaynagar", "jakkur", "devanahalli"], _BELLARY),
+    # ── Tumkur Road corridor (north-west) ──
     (["peenya"], ("SRS Peenya Junction", "Tumkur Road", 13.0346, 77.5299)),
     (["jalahalli"], ("Jalahalli Cross (SM Circle)", "Tumkur Road", 13.0400, 77.5183)),
     (["yeshwanthpur", "yeshwantpur"], ("Yeshwanthpura Circle", "Tumkur Road", 13.0178, 77.5573)),
-    (["tumkur road"], ("SRS Peenya Junction", "Tumkur Road", 13.0346, 77.5299)),
+    (["tumkur road", "goraguntepalya", "goruguntepalya", "dasarahalli", "nagasandra", "nelamangala", "rajajinagar"], _TUMKUR),
 ]
 
 # keyword group -> (event_cause, planned)
@@ -72,6 +83,7 @@ def _match_event(text: str):
 
 
 def _to_event(title: str, source: str, url: Optional[str], published: Optional[str]) -> dict:
+    title = title.replace("—", "-").replace("–", "-").strip()
     loc = _match_location(title)
     ev = _match_event(title)
     event_cause = ev[0] if ev else None
@@ -123,12 +135,40 @@ def curated_events() -> List[dict]:
     """A maintained watchlist of plausible upcoming events on supported corridors.
     Clearly labelled 'curated' — production would auto-populate this from event APIs."""
     seed = [
-        ("IPL match this weekend — heavy fan movement expected toward the stadium via Silk Board", None),
+        ("IPL match this weekend. Heavy fan movement expected toward the stadium via Silk Board", None),
         ("Political rally and procession announced near Mekhri Circle on Bellary Road", None),
         ("Industrial-area festival procession scheduled at Peenya, Tumkur Road", None),
-        ("Concert at city venue — late-night dispersal expected around Hebbal", None),
+        ("Concert at city venue. Late-night dispersal expected around Hebbal", None),
     ]
     return [_to_event(title, "curated", url, "Upcoming") for title, url in seed]
+
+
+_STALE_AFTER = 4 * 86400  # an event older than this is treated as over
+
+
+def _parse_ts(published: Optional[str]) -> Optional[float]:
+    if not published:
+        return None
+    try:
+        dt = parsedate_to_datetime(published)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+    except Exception:
+        return None
+
+
+def _humanize(ts: float, now: float) -> str:
+    diff = ts - now
+    future = diff > 0
+    s = abs(diff)
+    if s < 3600:
+        val, unit = max(1, int(s / 60)), "min"
+    elif s < 86400:
+        val, unit = int(s / 3600), "h"
+    else:
+        val, unit = int(s / 86400), "d"
+    return f"in {val}{unit}" if future else f"{val}{unit} ago"
 
 
 def get_upcoming_events() -> dict:
@@ -136,14 +176,31 @@ def get_upcoming_events() -> dict:
     if _CACHE["items"] is None or now - _CACHE["ts"] > _CACHE_TTL:
         _CACHE["items"] = fetch_live_events()
         _CACHE["ts"] = now
-    live = _CACHE["items"] or []
-    curated = curated_events()
-    # Surface mappable items first, then the rest.
-    events = live + curated
-    events.sort(key=lambda e: (not e["mappable"],))
+    live_raw = _CACHE["items"] or []
+
+    events = []
+    # Live items: drop anything older than the stale window (event is over).
+    for e in live_raw:
+        ts = _parse_ts(e.get("published"))
+        if ts is None:
+            ts = now
+        if now - ts > _STALE_AFTER:
+            continue
+        events.append({**e, "ts": ts, "when": _humanize(ts, now)})
+
+    # Curated watchlist: future-dated so it reads as upcoming and never expires.
+    for i, c in enumerate(curated_events()):
+        ts = now + (i + 1) * 86400
+        events.append({**c, "ts": ts, "when": _humanize(ts, now)})
+
+    # Chronological order (soonest in time first).
+    events.sort(key=lambda e: e["ts"])
+
+    live_final = [e for e in events if e["source"] == "live"]
+    curated_final = [e for e in events if e["source"] == "curated"]
     return {
-        "live_status": "ok" if live else "unavailable",
-        "live_count": len(live),
-        "curated_count": len(curated),
+        "live_status": "ok" if live_raw else "unavailable",
+        "live_count": len(live_final),
+        "curated_count": len(curated_final),
         "events": events,
     }

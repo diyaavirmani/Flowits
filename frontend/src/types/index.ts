@@ -131,6 +131,7 @@ export interface UpcomingEvent {
   latitude: number | null
   longitude: number | null
   mappable: boolean
+  when: string | null
 }
 
 export interface UpcomingEventsResponse {

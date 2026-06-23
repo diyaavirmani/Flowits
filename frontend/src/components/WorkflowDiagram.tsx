@@ -67,10 +67,27 @@ export default function WorkflowDiagram() {
 
       <g>
         <rect x={cx - 34} y={cy - 34} width={68} height={68} rx={10} fill="#fff1e9" stroke="#1a1a1a" strokeWidth={1.4} />
-        <line x1={cx} y1={cy - 17} x2={cx} y2={cy + 17} stroke="#1a1a1a" strokeWidth={3} />
-        <line x1={cx - 17} y1={cy} x2={cx + 17} y2={cy} stroke="#1a1a1a" strokeWidth={3} />
-        <line x1={cx - 11} y1={cy - 11} x2={cx + 11} y2={cy + 11} stroke="#1a1a1a" strokeWidth={2} />
-        <line x1={cx + 11} y1={cy - 11} x2={cx - 11} y2={cy + 11} stroke="#1a1a1a" strokeWidth={2} />
+        {/* FLOWITS engine: a slowly turning gear that converts inputs into decisions */}
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from={`0 ${cx} ${cy}`} to={`360 ${cx} ${cy}`} dur="16s" repeatCount="indefinite" />
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = (i * Math.PI) / 4
+            return (
+              <line
+                key={i}
+                x1={cx + Math.cos(a) * 12}
+                y1={cy + Math.sin(a) * 12}
+                x2={cx + Math.cos(a) * 17}
+                y2={cy + Math.sin(a) * 17}
+                stroke="#1a1a1a"
+                strokeWidth={2.6}
+                strokeLinecap="round"
+              />
+            )
+          })}
+          <circle cx={cx} cy={cy} r={12} fill="none" stroke="#1a1a1a" strokeWidth={2.4} />
+          <circle cx={cx} cy={cy} r={4.5} fill="#ea580c" />
+        </g>
         <circle cx={cx} cy={cy} r={28} fill="none" stroke="#ea580c" strokeWidth={1}>
           <animate attributeName="r" values="28;32;28" dur="3s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.6;0.15;0.6" dur="3s" repeatCount="indefinite" />

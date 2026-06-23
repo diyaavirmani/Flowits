@@ -126,6 +126,7 @@ export default function UpcomingEvents({ onResult }: UpcomingEventsProps) {
             <p className="font-bold leading-snug mb-1">{ev.title}</p>
             <p className="text-sm text-ink-secondary mb-3">
               {ev.location_name}, {ev.corridor}
+              {ev.when ? ` · ${ev.when}` : ''}
             </p>
             <button
               type="button"

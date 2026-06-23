@@ -100,6 +100,7 @@ class UpcomingEvent(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     mappable: bool = False
+    when: Optional[str] = None
 
 
 class UpcomingEventsResponse(BaseModel):
