@@ -51,15 +51,66 @@ An incoming event runs through the **Severity Engine**, the **FLOWITS Engine** o
 
 ## 5. Approach
 
-FLOWITS pairs a trained machine learning model with a transparent operational playbook, so it stays honest rather than acting as a black box.
+The problem statement asks us to handle event-driven congestion, both planned and unplanned, end to end: see it coming, judge how bad it is, and plan the response. We solved this by combining a trained machine learning core with a transparent operational playbook and a graph-based planner, all behind an officer-first interface. This section walks through how each piece works and why we chose it.
 
-- **The model** forecasts severity (four classes) and duration statistically from 8,057 historical incidents.
-- **The playbook** is a stated rule layer that adds what the data cannot know, such as treating a marquee event (IPL, rally, concert) as high impact and flagging secondary risks like crowd surge, theft, and scuffles.
-- **Impact first.** The output leads with consequences in plain language. The severity score is shown, but it is not the headline.
-- **Officer first.** No coordinates and no technical input are needed. The system fills in the rest.
-- **Honest by design.** It shows its confidence and its limits. High-severity classes are rare in the data, and the system says so and asks an officer to confirm.
+### The problem, reframed
 
-Validated performance: cross-validated F1 of 0.859, ROC AUC of 0.974, duration MAE of about 52 minutes, across 12 leakage-controlled features.
+A control-room officer can tell you the event type, the location by name, and the time, but not latitude and longitude or a severity score. So the system is built around those three inputs and fills in everything else. It also leads with **impact** (the real consequences) rather than a raw number, because that is what an officer acts on.
+
+### Data and feature engineering
+
+The models are trained on a dataset of **8,057 real Bengaluru traffic incidents**. From each incident we build **12 leakage-controlled features**, including:
+
+- Historical closure rates by cause, junction, corridor, zone, and spatial cluster (how often that kind of incident or that place needed a road closure in the past).
+- Time signals: hour of day, day of week, weekend flag, peak-hour flag.
+- The `is_planned` flag (planned event vs unplanned incident) and the reported priority.
+
+**K-Means clustering** groups all incident locations into 15 spatial risk zones, so a brand-new location inherits the behaviour of its neighbourhood. To avoid data leakage, all historical rates are computed on the **training split only**, never on the test data.
+
+### The models, and why
+
+- **Severity classifier** (`scikit-learn` GradientBoostingClassifier): predicts one of four response classes (Monitor, Single officer, Standard response, Maximum response). We chose **gradient boosting** because it is the strongest general approach for small-to-medium **tabular** data with mixed signals and non-linear interactions, it is robust without heavy tuning, and it returns both class **probabilities** and **feature importances**, which makes every prediction explainable rather than a black box. The high-severity classes are rare, so we use **balanced class weights** and **tuned decision thresholds** for classes 2 and 3 to recover them without wrecking the common classes.
+- **Duration regressor** (GradientBoostingRegressor): predicts how many minutes the incident will take to clear, shown as an approximate range.
+
+### Metrics (reported honestly)
+
+- **Cross-validated F1 of 0.859** (5-fold, plus or minus 0.009, so performance is stable), **ROC AUC of 0.974**.
+- **Per-class F1:** Monitor 0.87, Single officer 0.92, Standard 0.38, Maximum 0.26. We **show** the weakness on the two rare high-severity classes instead of hiding it, and the app tells the officer to confirm those on the ground.
+- **Duration MAE of about 52 minutes** (RMSE about 80 minutes).
+- We publish the **confusion matrix** and the **feature importances** (reported priority and the historical closure rates carry most of the signal).
+
+### The domain playbook (why the model alone is not enough)
+
+Statistics cannot know that an IPL match or a political rally is inherently high impact, or that a night-time gathering carries a higher theft and altercation risk, because those signals are not in the data. The **playbook** is a transparent, stated rule layer that sits on top of the model: it applies severity floors for marquee events, adds secondary-risk watch-fors (crowd surge, pickpocketing, scuffles), and amplifies risk at peak hours and at night. It is clearly labelled as operational rules, not model output, so the system stays honest.
+
+### Planning: manpower and barricades
+
+Each supported corridor is modelled as a **NetworkX directed graph** of junctions. An impact score spreads from the incident to nearby and downstream junctions. A **greedy allocator** then places officers on the highest-impact junctions first, and barricades on the **bottleneck junctions** (in-degree of 2 or more, where traffic streams merge). The size of the resource pool scales with the model's severity class (0, 1, 3, or 6 officers from Monitor up to Maximum). Finally we compute a **before-and-after risk reduction** so the officer can see the value of the plan (a stated 35 percent mitigation per resourced junction, pending calibration against real deployment data).
+
+### Routing: the public diversion (Dijkstra)
+
+To reroute the public around the blockage, we take the corridor graph, **remove the blocked junction**, and add parallel **bypass edges** weighted with a 1.6 times detour cost. We then run **Dijkstra's shortest-path** algorithm (via NetworkX, using edge travel-time weights) from the intercept point to the rejoin point on the far side, which gives the lowest-time reroute and the **extra minutes** the detour adds. This is the part of the problem statement (diversion planning) that most prototypes skip.
+
+### Live event ingestion
+
+Upcoming events come from a **Google News RSS** feed (no API key needed), keyword-matched to known junctions and event types, with a curated watchlist so the board is never empty. Any event that maps to a supported corridor becomes a one-click pre-plan.
+
+### Why visualization, and which ones
+
+Officers think in maps and minutes, not in JSON, so the output is visual:
+
+- **Leaflet with OpenStreetMap tiles:** a real Bengaluru map that shows the incident, the placed officers and barricades, and the diversion route, with an SVG schematic fallback if tiles fail to load.
+- **Recharts:** an incidents-by-hour bar chart (to spot peak windows), a planned-vs-unplanned event-mix donut, a running-accuracy "learning loop" figure, and, on the About page, the per-class F1 bars and feature-importance bars.
+- **Confusion matrix image:** published for model transparency.
+- **Printable briefing report (PDF):** a one-click document with a peak-risk-by-hour chart that the control room can hand out.
+
+### The learning loop
+
+Every logged outcome is stored and feeds back into the system, so the models retrain as real data accrues and accuracy improves with use rather than going stale.
+
+### How it all solves the problem
+
+End to end: the officer enters three fields, the models forecast severity and duration, the playbook adds the real-world impact, the corridor graph plans the manpower, the barricading, and a public diversion, a briefing is generated, and the outcome is logged to sharpen the next forecast. The result turns a reactive control room into a planning one, for both planned and unplanned events.
 
 ---
 
