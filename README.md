@@ -53,7 +53,7 @@ An incoming event runs through the **Severity Engine**, the **FLOWITS Engine** o
 
 The problem statement asks us to handle event-driven congestion, both planned and unplanned, end to end: see it coming, judge how bad it is, and plan the response. We solved this by combining a trained machine learning core with a transparent operational playbook and a graph-based planner, all behind an officer-first interface. This section walks through how each piece works and why we chose it.
 
-### The problem, reframed
+### The problem
 
 A control-room officer can tell you the event type, the location by name, and the time, but not latitude and longitude or a severity score. So the system is built around those three inputs and fills in everything else. It also leads with **impact** (the real consequences) rather than a raw number, because that is what an officer acts on.
 
@@ -72,7 +72,7 @@ The models are trained on a dataset of **8,057 real Bengaluru traffic incidents*
 - **Severity classifier** (`scikit-learn` GradientBoostingClassifier): predicts one of four response classes (Monitor, Single officer, Standard response, Maximum response). We chose **gradient boosting** because it is the strongest general approach for small-to-medium **tabular** data with mixed signals and non-linear interactions, it is robust without heavy tuning, and it returns both class **probabilities** and **feature importances**, which makes every prediction explainable rather than a black box. The high-severity classes are rare, so we use **balanced class weights** and **tuned decision thresholds** for classes 2 and 3 to recover them without wrecking the common classes.
 - **Duration regressor** (GradientBoostingRegressor): predicts how many minutes the incident will take to clear, shown as an approximate range.
 
-### Metrics (reported honestly)
+### Metrics
 
 **Severity classifier (four classes), validated with 5-fold cross-validation:**
 
