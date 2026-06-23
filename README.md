@@ -22,7 +22,6 @@ An officer gives only three things: the event type, the location by name, and th
 |---|---|
 | Live demo | https://flowits-production.up.railway.app/ |
 | Demo video | _link to be added_ |
-| Telegram bot | _coming soon (see section 6)_ |
 
 ---
 
@@ -155,21 +154,7 @@ End to end: the officer enters three fields, the models forecast severity and du
 
 ---
 
-## 6. Telegram bot (planned, to be deployed)
-
-A Telegram bot will be the field-facing front door to FLOWITS, so an officer on the ground does not need the dashboard open.
-
-How it will work:
-1. The officer messages the bot with the event type, the location by name, and the time (a guided prompt or a simple `/plan` command).
-2. The bot calls the same FLOWITS API used by the web app (`/predict` and `/allocate`).
-3. The bot replies with the impact assessment, the recommended manpower and barricades per junction, and a link to the diversion map.
-4. After the event, the officer can log the actual outcome back through the bot, which feeds the learning loop.
-
-This reuses the existing backend, so no separate model or logic is needed. It is not yet deployed.
-
----
-
-## 7. What this project does
+## 6. What this project does
 
 - Forecasts the severity and duration of event-driven congestion for **both planned and unplanned** events.
 - Leads with **impact**: crowd surge, theft, scuffles, and queue build-up, in plain language.
@@ -181,7 +166,7 @@ This reuses the existing backend, so no separate model or logic is needed. It is
 
 ---
 
-## 8. Tech stack
+## 7. Tech stack
 
 | Layer | Technology |
 |---|---|
@@ -195,7 +180,7 @@ This reuses the existing backend, so no separate model or logic is needed. It is
 
 ---
 
-## 9. Repository structure
+## 8. Repository structure
 
 ```
 FLIPKART_PROTOTYPE/
@@ -227,7 +212,7 @@ FLIPKART_PROTOTYPE/
 
 ---
 
-## 10. Run locally
+## 9. Run locally
 
 **Prerequisites:** Python 3.11+ and Node.js 18+.
 The trained models are committed in `backend/model_artifacts/`, so the app runs without retraining.
@@ -278,7 +263,7 @@ Open `http://localhost:8001`.
 
 ---
 
-## 11. Pre-existing tools and assets used
+## 10. Pre-existing tools and assets used
 
 - **Open-source libraries:** FastAPI, Uvicorn, Pydantic, scikit-learn, NetworkX, pandas, NumPy, React, Vite, Tailwind CSS, Recharts, Leaflet, axios.
 - **Map tiles:** OpenStreetMap (free, open data).
@@ -290,19 +275,19 @@ All other logic (the models, the corridor graphs, the playbook, the allocation a
 
 ---
 
-## 12. Future scope
+## 11. Future scope
 
 - Extend from a few corridors to a full city, and onward to other cities, using the same framework.
 - Connect to official event listings, CCTV and sensor feeds, and live GPS traffic data.
 - Calibrate the manpower and barricade guidance against real deployment records.
-- Deploy the Telegram bot for field officers.
+- Deploy a Telegram bot as a field-facing front door, so an officer can get a full plan by messaging the event, location, and time, without opening the dashboard. It will reuse the existing API, so no separate model is needed.
 - Add a mobile-friendly view and multi-language support.
 
 ---
 
 <div align="center">
 
-## 13. Thanks
+## 12. Thanks
 
 Built with care by **Team Antigravity**.
 
